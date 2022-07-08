@@ -33,10 +33,21 @@ impl Default for Person {
 // If while parsing the age, something goes wrong, then return the default of Person
 // Otherwise, then return an instantiated Person object with the results
 
-// I AM NOT DONE
-
 impl From<&str> for Person {
     fn from(s: &str) -> Person {
+        fn _from(s: &str) -> Result<Person, Box<dyn std::error::Error>> {
+            if s.is_empty() {
+                return Err("Empty string".into());
+            }
+            let mut split_str = s.splitn(2, ',');
+            let name: String = split_str.next().ok_or("No name provided")?.to_string();
+            if name.is_empty() {
+                return Err("No name provided".into());
+            }
+            let age = split_str.next().ok_or("No age provided")?.parse::<usize>()?;
+            Ok(Person { name, age })
+        }
+        _from(s).unwrap_or(Person::default())
     }
 }
 
